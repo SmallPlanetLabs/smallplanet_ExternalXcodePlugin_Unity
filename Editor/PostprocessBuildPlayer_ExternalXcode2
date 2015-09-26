@@ -1,0 +1,36 @@
+#!/usr/bin/python
+
+from __future__ import print_function
+import sys
+from mod_pbxproj import XcodeProject
+from subprocess import Popen
+from subprocess import PIPE
+
+def main(argv):
+    working_directory = "$PROJECT_DIR/../../"
+    install_path = argv[1]
+    target = argv[2]
+    optimization = argv[3]
+    company_name = argv[4]
+    product_name = argv[5]
+    storage_path=working_directory+"/UnityExternalXcodePlugin/SyncToXcode"
+        
+    if target == 'iPhone':
+        project_name = 'Unity-iPhone'
+                
+        project = XcodeProject.Load(install_path+'/'+project_name+'.xcodeproj/project.pbxproj')
+		
+        script = "";
+        script += "cp \"$PROJECT_DIR/Unity-iPhone.xcodeproj/project.pbxproj\" \""+storage_path+"/project.pbxproj\"\n";
+        script += "cp \"$PROJECT_DIR/Info.plist\" \""+storage_path+"/Info.plist\"\n";
+        script += "rsync -r \"$PROJECT_DIR/ExternalFiles\" \""+storage_path+"/\"\n";
+        
+        
+        project.add_run_script_all_targets(script)
+
+        project.backup()
+        project.save()
+
+
+if __name__ == "__main__":
+    main(sys.argv)

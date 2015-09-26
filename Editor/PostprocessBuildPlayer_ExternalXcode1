@@ -1,0 +1,39 @@
+#!/bin/bash
+
+if [ "$2" == "iPhone" ]
+then
+
+    #1) Try and keep files in temporary Unity created XCode folder with one we keep in git
+    working_directory=`pwd`;
+    install_directory="$1"
+    
+    project_template_path="$working_directory/UnityExternalXcodePlugin/SyncToXcode/project.pbxproj"
+    project_path="$1/Unity-iPhone.xcodeproj/project.pbxproj"
+    
+    files_template_path="$working_directory/UnityExternalXcodePlugin/SyncToXcode/ExternalFiles"
+    files_path="$1/"
+	
+    info_plist_template_path="$working_directory/UnityExternalXcodePlugin/SyncToXcode/Info.plist"
+    info_plist_path="$1/Info.plist"
+    
+    if [ -f "$project_template_path" ]
+    then
+        rm -f "$project_path"
+        cp "$project_template_path" "$project_path"
+        
+		cp "$info_plist_template_path" "$info_plist_path"
+		
+        cp -r "$files_template_path" "$files_path"
+        
+    else
+        #2) If it does not, do a little manipulation to help these make the watch os integration easier
+        sed -i '' 's/SUPPORTED_PLATFORMS = iphonesimulator;/SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";/' "$project_path"
+        sed -i '' 's/SUPPORTED_PLATFORMS = iphoneos;/SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";/' "$project_path"
+    
+        sed -i '' 's/SDKROOT = iphonesimulator;/SDKROOT = iphoneos;/' "$project_path"
+        
+        #3) store a copy of the .pbxproj in our sync folder
+        cp "$project_path" "$project_template_path"
+		cp "$info_plist_path" "$info_plist_template_path"
+    fi
+fi

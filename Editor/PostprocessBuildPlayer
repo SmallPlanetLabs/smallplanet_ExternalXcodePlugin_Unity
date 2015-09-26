@@ -1,0 +1,13 @@
+#!/bin/bash
+
+exec &> /tmp/PostprocessBuildPlayerLogs.txt
+
+# Find all other PostprocessBuildPlayer_* scripts and execute them
+for file in `find ./Assets/Editor -regex ".*PostprocessBuildPlayer_.*" -maxdepth 1 -print 2>/dev/null`
+do
+    if [[ $file != *"meta"* ]]
+    then
+        echo $file
+        $file "$@"
+    fi
+done
