@@ -31,9 +31,11 @@ then
         sed -i '' 's/SUPPORTED_PLATFORMS = iphoneos;/SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";/' "$project_path"
     
         sed -i '' 's/SDKROOT = iphonesimulator;/SDKROOT = iphoneos;/' "$project_path"
-        
+		        
         #3) store a copy of the .pbxproj in our sync folder
         cp "$project_path" "$project_template_path"
 		cp "$info_plist_path" "$info_plist_template_path"
+		
+		cp -r "$files_template_path" "$files_path"
     fi
 fi
